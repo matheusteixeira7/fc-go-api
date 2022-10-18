@@ -8,12 +8,32 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/jwtauth"
 	"github.com/matheusteixeira7/fc-go-api/configs"
+	_ "github.com/matheusteixeira7/fc-go-api/docs"
 	"github.com/matheusteixeira7/fc-go-api/internal/entity"
 	"github.com/matheusteixeira7/fc-go-api/internal/infra/database"
 	"github.com/matheusteixeira7/fc-go-api/internal/webserver/handlers"
+	httpSwagger "github.com/swaggo/http-swagger"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
+
+// @title           Swagger Example API
+// @version         1.0
+// @description     This is a sample server celler server.
+// @termsOfService  http://swagger.io/terms/
+
+// @contact.name   API Support
+// @contact.url    http://www.swagger.io/support
+// @contact.email  support@swagger.io
+
+// @license.name  Apache 2.0
+// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host      localhost:8080
+// @BasePath  /
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 
 func main() {
 	configs, err := configs.LoadConfig(".")
@@ -53,6 +73,8 @@ func main() {
 		r.Post("/", userHandler.CreateUser)
 		r.Post("/generate_token", userHandler.GetJWT)
 	})
+
+	r.Get("/docs/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:8080/docs/doc.json")))
 
 	fmt.Println("Server is running on port 8080")
 	http.ListenAndServe(":8080", r)
